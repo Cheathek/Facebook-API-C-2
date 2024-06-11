@@ -15,4 +15,17 @@ class Post extends Model
         'auth_id',
         'tags',
     ];
+    public static function list()
+    {
+        $post= self::all();
+        return $post;
+    }
+
+    public static function store($request, $id = null)
+    {
+        $post = $request->only('title', 'content', 'auth_id', 'tags');
+        $post = self::updateOrCreate(['id' => $id], $post);
+    }
+
+
 }

@@ -23,7 +23,7 @@ class AuthController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
-            'profile' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg,mp4|max:20480', // File validation (increased size for videos)
+            'profile' => 'nullable|file|mimes:jpeg,png,jpg,gif,svg|max:20480',
         ]);
 
         if ($validator->fails()) {
@@ -136,8 +136,6 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
-
-    // Method to handle forgot password request with PIN
     public function forgotPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -157,9 +155,33 @@ class AuthController extends Controller
         $pin = rand(100000, 999999);
 
         return response()->json([
-            'message' => 'PIN code sent to your email.',
+            'message' => 'PIN code generated.',
             'pin' => $pin,
         ], 200);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'pin' => 'required|integer',
+            'password' => 'required|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user = User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return response()->json(['message' => 'Invalid email or PIN.'], 400);
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        return response()->json(['message' => 'Password changed successfully.'], 200);
     }
 
 

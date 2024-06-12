@@ -16,7 +16,13 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::post('/register', [AuthController::class, 'register'])->name('register');
 Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
+Route::middleware('auth:sanctum')->post('/update-password', [AuthController::class, 'updatePassword']);
+Route::post('/password/forgot', [AuthController::class, 'forgotPassword'])->name('password.forgot');
+// Reset Password
+Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
 
 Route::get('/post/list',[PostController::class,'index'])->name('post.list');
 Route::post('/post/create',[PostController::class,'store'])->name('post.create');

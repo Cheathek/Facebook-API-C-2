@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Auth;
 
 class Friend extends Model
 {
@@ -12,24 +13,38 @@ class Friend extends Model
 
     protected $fillable = ['user_id', 'friend_id', 'confirmed'];
 
-    public function user()
-    {
-        return $this->belongsTo(User::class,'user_id','id');
-    }
 
-    public function friends():HasMany
+    public function friends(): HasMany
     {
-        return $this->hasMany(User::class, 'friend_id','id');
+        return $this->hasMany(User::class, 'friend_id', 'id');
     }
 
     public static function list()
     {
-        $post= self::all();
-        return $post;
+        $userId = Auth::id();
+        $friends = self::where('user_id', $userId)
+            ->where('confirmed', true)
+            ->orWhere('friend_id', $userId)
+            ->where('confirmed', true)
+            ->get();
+
+        return $friends;
     }
-    public static function store($request, $id = null)
+    public static function requestList()
     {
-        $friend = $request->only('user_id', 'friend_id','confirmed');
-        $friend = self::updateOrCreate(['id' => $id], $friend);
+        $userId = Auth::id();
+        $friends = self::where('user_id', $userId)
+            ->where('confirmed', false)
+            ->orWhere('friend_id', $userId)
+            ->where('confirmed', false)
+            ->get();
+
+        return $friends;
     }
+    public static function store($data, $id = null)
+    {
+        self::updateOrCreate(['id' => $id], $data);
+    }
+
+    
 }

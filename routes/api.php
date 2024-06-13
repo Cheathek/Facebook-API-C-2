@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -41,7 +42,10 @@ Route::prefix('post')->middleware('auth:sanctum')->group(function () {
 // Friends
 Route::prefix('friend')->middleware('auth:sanctum')->group(function () {
     Route::get('/list', [FriendController::class, 'index'])->name('friend.list');
-    Route::post('/comfirm', [FriendController::class, 'store'])->name('friend.comfirm');
+    Route::get('/list/friend-list/{id}', [UserController::class, 'show'])->name('friend.show');
+    Route::get('/request/list', [FriendController::class, 'indexRequest'])->name('friend.list');
+    Route::delete('/request/remove', [FriendController::class, 'removeFriendRequest'])->name('friend.remove');
+    Route::post('/confirm', [FriendController::class, 'confirm'])->name('friend.comfirm');
     Route::post('/request', [FriendController::class, 'store'])->name('friend.create');
     Route::put('/update/{id}', [FriendController::class, 'update'])->name('friend.update');
     Route::delete('/cancel /{id}', [FriendController::class, 'destroy'])->name('friend.destroy');

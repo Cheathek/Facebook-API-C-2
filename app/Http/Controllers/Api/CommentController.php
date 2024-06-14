@@ -16,8 +16,7 @@ class CommentController extends Controller
      */
     public function index()
     {
-        $comments = Comment::all();;
-        return response()->json($comments);
+        return response()->json(Comment::all());
     }
 
     /**
@@ -28,32 +27,13 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'content' => 'required|string|min:3',
-            'img' => 'required|file|mimetypes:image/jpeg,image/png,image/gif',            'video' => 'nullable|file|mimetypes:video/mp4,application/octet-stream',
-            'sticker' => 'nullable|file|mimetypes:,extension:webp,avif',
-            'user_id' => 'required|integer|exists:users,id',
-            'post_id' => 'required|integer|exists:posts,id',
-            'like_count' => 'nullable|integer|min:0',
-        ]);
-
+        $validator = $this->validateComment($request);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
-        $comment = Comment::create([
-            'content' => $request->content,
-            'img' => $request->img,
-            'sticker' => $request->sticker, 
-            'user_id' => $request->user_id,
-            'post_id' => $request->post_id,
-            'like_count' => $request->like_count ?? 0,
-        ]);
-
-        if ($request->hasFile('attachment')) {
-            $attachment = $this->storeAttachment($request->file('attachment'), $comment->id);
-            $comment->attachments()->save($attachment);
-        }
+        $comment = Comment::create($request->all());
+        $this->storeAttachment($request, $comment);
 
         return response()->json(['success' => true, 'message' => 'created comment successfully'], 200);
     }
@@ -66,8 +46,8 @@ class CommentController extends Controller
      */
     public function show($id)
     {
-        $comment = Comment::with('attachments')->findOrFail($id);
-        return response()->json($comment);
+        $comment = Comment::find($id);
+        return response()->json(['success' => true, 'data' => $comment], 200);
     }
 
     /**
@@ -79,28 +59,16 @@ class CommentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            'content' => 'required|string|min:3',
-            'like_count' => 'nullable|integer|min:0',
-            'attachment' => 'nullable|file|mimetypes:image/jpeg,image/png,image/gif,video/mp4,application/octet-stream',
-        ]);
-
+        $validator = $this->validateComment($request, true);
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
         $comment = Comment::findOrFail($id);
-        $comment->update([
-            'content' => $request->content,
-            'like_count' => $request->like_count ?? 0,
-        ]);
+        $comment->update($request->all());
+        $this->storeAttachment($request, $comment);
 
-        if ($request->hasFile('attachment')) {
-            $attachment = $this->storeAttachment($request->file('attachment'), $comment->id);
-            $comment->attachments()->save($attachment);
-        }
-
-        return response()->json(['success' => true, 'message' => 'updated comment successfully'],);
+        return response()->json(['success' => true, 'message' => 'updated comment successfully']);
     }
 
     /**
@@ -111,16 +79,47 @@ class CommentController extends Controller
      */
     public function destroy($id)
     {
-        $comment = Comment::findOrFail($id);
-        $comment->delete();
 
-        return response()->json(['message' => 'Comment deleted successfully.'], 204);
+        $comment = Comment::find($id);
+        $comment->delete();
+        return response()->json([
+            'success' => true,
+            'data' => true,
+            'message' => 'comment delete successfully'
+        ], 200);
     }
 
-    private function storeAttachment($file, $commentId)
+    private function validateComment(Request $request, $isUpdate = false)
+    {
+        $rules = [
+            'content' => 'required|string|min:3',
+            'user_id' => 'required|integer|exists:users,id',
+            'post_id' => 'required|integer|exists:posts,id',
+            'like_count' => 'nullable|integer|min:0',
+        ];
+
+        if ($isUpdate) {
+            $rules['attachment'] = 'nullable|file|mimetypes:image/jpeg,image/png,image/gif,video/mp4,application/octet-stream';
+        } else {
+            $rules['img'] = 'required|file|mimetypes:image/jpeg,image/png,image/gif';
+            $rules['video'] = 'nullable|file|mimetypes:video/mp4,application/octet-stream';
+            $rules['sticker'] = 'nullable|file|mimetypes:,extension:webp,avif';
+        }
+
+        return Validator::make($request->all(), $rules);
+    }
+
+    private function storeAttachment(Request $request, Comment $comment)
+    {
+        if ($request->hasFile('attachment')) {
+            $attachment = $this->createAttachment($request->file('attachment'), $comment->id);
+            $comment->attachments()->save($attachment);
+        }
+    }
+
+    private function createAttachment($file, $commentId)
     {
         $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
         $file->storeAs('comments', $filename);
 
         return new Comment([

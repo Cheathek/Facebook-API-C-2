@@ -25,6 +25,7 @@ Route::post('/comment/create', [CommentController::class, 'store']);
 Route::get('/comment/show/{id}', [CommentController::class, 'show']);
 Route::put('/comment/update/{id}', [CommentController::class, 'update']); 
 Route::delete('/comment/delete/{id}', [CommentController::class, 'destroy']);
+
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register'])->name('register');

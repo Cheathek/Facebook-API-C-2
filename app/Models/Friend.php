@@ -13,7 +13,6 @@ class Friend extends Model
 
     protected $fillable = ['user_id', 'friend_id', 'confirmed'];
 
-
     public function friends(): HasMany
     {
         return $this->hasMany(User::class, 'friend_id', 'id');

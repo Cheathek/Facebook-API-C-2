@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
 {
@@ -11,21 +12,28 @@ class Post extends Model
 
     protected $fillable = [
         'title',
-        'content',
-        'auth_id',
+        'text',
+        'image',
+        'video',
+        'user_id',
         'tags',
     ];
+    public function getImagesAttribute($value)
+    {
+        return json_decode($value, true);
+    }
     public static function list()
     {
-        $post= self::all();
-        return $post;
+        $userId = Auth::id();
+        $friends = self::where('user_id', $userId)
+            ->get();
+        return $friends;
     }
-
-    public static function store($request, $id = null)
+    public static function listPostFriend($id)
     {
-        $post = $request->only('title', 'content', 'auth_id', 'tags');
-        $post = self::updateOrCreate(['id' => $id], $post);
+        $friends = self::where('user_id',$id)
+            ->get();
+        return $friends;
     }
-
-
+    
 }

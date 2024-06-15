@@ -43,6 +43,7 @@ Route::prefix('auth')->group(function () {
 Route::prefix('post')->middleware('auth:sanctum')->group(function () {
     Route::get('/list', [PostController::class, 'index'])->name('post.list');
     Route::post('/create', [PostController::class, 'store'])->name('post.create');
+    Route::post('/update/image/{id}', [PostController::class, 'updateImage'])->name('post.updateImage');
     Route::put('/update/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('post.destroy');
     Route::get('/show/{id}', [PostController::class, 'show'])->name('post.show');

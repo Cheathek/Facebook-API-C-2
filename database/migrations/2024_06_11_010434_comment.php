@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('sticker')->nullable();
             $table->integer('user_id');
             $table->integer('post_id');
-            $table->integer('like_count');
             $table->timestamps();
         });
     }

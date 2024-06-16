@@ -17,6 +17,35 @@ use Illuminate\Support\Facades\Validator;
 class AuthController extends Controller
 {
 
+    /**
+     * @OA\post(
+     *     path="/api/auth/register",
+     *     tags={"Users"},
+     *     summary="Create new account",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="register",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function register(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -59,6 +88,35 @@ class AuthController extends Controller
         ], 201);
     }
 
+     /**
+     * @OA\post(
+     *     path="/api/auth/login",
+     *     tags={"Users"},
+     *     summary="Login an account",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="login",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function login(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -88,8 +146,36 @@ class AuthController extends Controller
         ]);
     }
 
-
-    public function index(Request $request)
+ /**
+     * @OA\Get(
+     *     path="/api/auth/profile",
+     *     tags={"Users"},
+     *     summary="View profile account",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="profile",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+    public function profile(Request $request)
     {
         $user = $request->user();
         if ($user) {
@@ -105,12 +191,71 @@ class AuthController extends Controller
         }
     }
 
+     /**
+     * @OA\Delete(
+     *     path="/api/auth/logout",
+     *     tags={"Users"},
+     *     summary="Logout an account",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="logout",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function logout(Request $request): JsonResponse
     {
         $request->user()->currentAccessToken()->delete();
 
         return response()->json(['message' => 'Logout successful'], 200);
     }
+
+     /**
+     * @OA\Put(
+     *     path="/api/auth/password/reset",
+     *     tags={"Users"},
+     *     summary="reset new password",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="updatePassword",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
 
     public function updatePassword(Request $request): JsonResponse
     {
@@ -135,6 +280,36 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Password updated successfully'], 200);
     }
+
+     /**
+     * @OA\Post(
+     *     path="/api/auth/password/forgot",
+     *     tags={"Users"},
+     *     summary="Forgot password ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="forgotPassword",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function forgotPassword(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
@@ -158,6 +333,36 @@ class AuthController extends Controller
             'pin' => $pin,
         ], 200);
     }
+
+      /**
+     * @OA\Post(
+     *     path="/api/auth/password/update",
+     *     tags={"Users"},
+     *     summary="update when get pin-code password ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="resetPassword",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
 
     public function resetPassword(Request $request): JsonResponse
     {
@@ -183,5 +388,126 @@ class AuthController extends Controller
         return response()->json(['message' => 'Password changed successfully.'], 200);
     }
 
+          /**
+     * @OA\Put(
+     *     path="/api/auth/update",
+     *     tags={"Users"},
+     *     summary="Update information of user ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="updateInformation",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+    public function updateInformation(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'name' => 'nullable|string|max:255',
+            'email' => 'nullable|string|email|max:255',
+            'password' => 'nullable|string|min:8',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user_id = Auth::id();
+        $user = User::find($user_id);
+
+        if ($request->has('name')) {
+            $user->name = $request->input('name');
+        }
+
+        if ($request->has('email')) {
+            $user->email = $request->input('email');
+        }
+
+        if ($request->has('password')) {
+            $user->password = bcrypt($request->input('password'));
+        }
+        $user->save();
+
+
+
+        return response()->json([
+            'message' => 'User updated successfully',
+            'user' => $user,
+        ], 200);
+    }
+
+            /**
+     * @OA\Post(
+     *     path="/api/auth/update/profile",
+     *     tags={"Users"},
+     *     summary="Update profile of user ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="updateProfile",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+    public function updateProfile(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'profile' => 'nullable|image|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
+
+        $user_id = Auth::id();
+        $user = User::find($user_id);
+
+        if ($request->hasFile('profile')) {
+            $image = $request->file('profile');
+            $imageName = time() . '.' . $image->getClientOriginalExtension();
+            $image->storeAs('public/images', $imageName);
+            $user->profile = 'images/' . $imageName;
+        }
+
+        $user->save();
+
+        return response()->json([
+            'message' => 'User profile image updated successfully',
+            'user' => $user,
+        ], 200);
+    }
 
 }

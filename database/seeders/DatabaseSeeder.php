@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             Schema::disableForeignKeyConstraints();
             $this->call(RoleAndPermissionSeeder::class);
             $this->call(UserSeeder::class);
+            $this->call(LikeTypeSeeder::class); // Add this line to call the LikeTypeSeeder
             Schema::enableForeignKeyConstraints();
         } else {
             $this->call(DefaultUsersSeeder::class);

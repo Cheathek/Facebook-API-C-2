@@ -18,7 +18,9 @@ return new class extends Migration
             $table->string('image')->nullable();
             $table->string('video')->nullable();
             $table->integer('user_id');
+            $table->boolean('share')->default(0);
             $table->string('tags')->nullable();
+            $table->integer('post_id')->nullable();
             $table->timestamps();
         });
     }

@@ -23,7 +23,12 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name', 'email', 'password', 'email_verified_at', 'remember_token','profile',
+        'name',
+        'email',
+        'password',
+        'email_verified_at',
+        'remember_token',
+        'profile',
     ];
 
     /**
@@ -52,6 +57,10 @@ class User extends Authenticatable
     public function friends(): HasMany
     {
         return $this->hasMany(Friend::class, 'friend_id', 'id');
+    }
+    public function likes(): HasMany
+    {
+        return $this->hasMany(LikePost::class,"user_id","id");
     }
 
 }

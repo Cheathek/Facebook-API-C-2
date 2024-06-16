@@ -12,17 +12,109 @@ class FriendController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+            /**
+     * @OA\Get(
+     *     path="/api/friend/list",
+     *     tags={"Friends"},
+     *     summary="Get all friends ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="friendList",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful show",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+
+    public function friendList()
     {
         $friends = Friend::list();
         return response()->json(['success' => true, 'friends' => $friends]);
     }
+
+    
+               /**
+     * @OA\Get(
+     *     path="/api/friend/request/list",
+     *     tags={"Friends"},
+     *     summary="Show all friends who request to you ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="indexRequest",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful show",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function indexRequest()
     {
         $friends = Friend::requestList();
         return response()->json(['success' => true, 'friends' => $friends]);
     }
-    public function store(Request $request)
+
+               /**
+     * @OA\Post(
+     *     path="/api/friend/create",
+     *     tags={"Friends"},
+     *     summary="Add friend ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="storeFriend",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful show",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+    public function storeFriend(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'friend_id' => 'required|exists:users,id',
@@ -69,6 +161,35 @@ class FriendController extends Controller
         ], 200);
     }
 
+                   /**
+     * @OA\Post(
+     *     path="/api/friend/confirm",
+     *     tags={"Friends"},
+     *     summary="Confirm friend ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="confirm",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful show",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function confirm(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -105,6 +226,35 @@ class FriendController extends Controller
 
     }
 
+                       /**
+     * @OA\Delete(
+     *     path="/api/friend/request/remove",
+     *     tags={"Friends"},
+     *     summary="Remove friend request to add friend and delete friend",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="removeFriendRequest",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful show",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
     public function removeFriendRequest(Request $request)
     {
         $validator = Validator::make($request->all(), [

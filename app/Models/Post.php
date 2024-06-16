@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 class Post extends Model
@@ -16,6 +17,8 @@ class Post extends Model
         'image',
         'video',
         'user_id',
+        'share',
+        'post_id',
         'tags',
     ];
     public function getImagesAttribute($value)
@@ -35,5 +38,9 @@ class Post extends Model
             ->get();
         return $friends;
     }
+    public function likes(): HasMany
+{
+    return $this->hasMany(LikePost::class);
+}
     
 }

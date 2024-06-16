@@ -1,8 +1,11 @@
 <?php
 
-use App\Http\Controllers\Api\CommentController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\LikeCommentController;
+use App\Http\Controllers\LikeController;
+use App\Http\Controllers\LikePostController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -18,25 +21,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::get('/me', [AuthController::class, 'index'])->middleware('auth:sanctum');
+Route::get('/profile', [AuthController::class, 'profile'])->middleware('auth:sanctum');
 
-Route::get('/comment/list', [CommentController::class, 'index']);
-Route::post('/comment/create', [CommentController::class, 'store']);
-Route::get('/comment/show/{id}', [CommentController::class, 'show']);
-Route::put('/comment/update/{id}', [CommentController::class, 'update']); 
-Route::delete('/comment/delete/{id}', [CommentController::class, 'destroy']);
+
 
 Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
     Route::post('/register', [AuthController::class, 'register'])->name('register');
-     
+    Route::post('/password/forgot', [AuthController::class, 'forgotPassword'])->name('password.forgot');
+    Route::put('/password/update', [AuthController::class, 'resetPassword'])->name('password.changed');
+
     Route::middleware('auth:sanctum')->group(function () {
-        Route::post('/logout', [AuthController::class, 'logout']);
-        Route::get('/profile', [AuthController::class, 'index']);
-        Route::post('/update-password', [AuthController::class, 'updatePassword']);
-        Route::post('/password/forgot', [AuthController::class, 'forgotPassword'])->name('password.forgot');
-        Route::post('/password/reset', [AuthController::class, 'resetPassword'])->name('password.reset');
+        Route::delete('/logout', [AuthController::class, 'logout']);
+        Route::post('/reset', [AuthController::class, 'updatePassword']);
+        Route::put('/update', [AuthController::class, 'updateInformation']);
+        Route::post('/update/profile', [AuthController::class, 'updateProfile']);
     });
 });
 
@@ -48,17 +47,43 @@ Route::prefix('post')->middleware('auth:sanctum')->group(function () {
     Route::put('/update/{id}', [PostController::class, 'update'])->name('post.update');
     Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('post.destroy');
     Route::get('/show/{id}', [PostController::class, 'show'])->name('post.show');
+    Route::post('/share', [PostController::class, 'share'])->name('post.share');
 });
 
 // Friends
 Route::prefix('friend')->middleware('auth:sanctum')->group(function () {
-    Route::get('/list', [FriendController::class, 'index'])->name('friend.list');
-    Route::get('/list/friend-list/{id}', [UserController::class, 'show'])->name('friend.show');
+    Route::get('/list', [FriendController::class, 'friendList'])->name('friend.list');
+    Route::get('/list/friend-list/{id}', [UserController::class, 'showFriend'])->name('friend.show');
     Route::get('/request/list', [FriendController::class, 'indexRequest'])->name('friend.list');
     Route::delete('/request/remove', [FriendController::class, 'removeFriendRequest'])->name('friend.remove');
     Route::post('/confirm', [FriendController::class, 'confirm'])->name('friend.comfirm');
-    Route::post('/request', [FriendController::class, 'store'])->name('friend.create');
-    Route::put('/update/{id}', [FriendController::class, 'update'])->name('friend.update');
+    Route::post('/request', [FriendController::class, 'storeFriend'])->name('friend.create');
     Route::delete('/cancel /{id}', [FriendController::class, 'destroy'])->name('friend.destroy');
-    Route::get('/show/{id}', [FriendController::class, 'show'])->name('friend.show');
+});
+
+// Like post
+Route::prefix('like/post')->middleware('auth:sanctum')->group(function () {
+    Route::get('/list', [LikePostController::class, 'listLikePost'])->name('like.list');
+    Route::post('/create', [LikePostController::class, 'likePost'])->name('like.create');
+    Route::delete('/delete/{id}', [LikePostController::class, 'unlikePost'])->name('like.delete');
+    Route::put('/update/reach/{id}', [LikePostController::class, 'updateReach'])->name('like.update');
+
+});
+
+// like comment
+Route::prefix('like/comment')->middleware('auth:sanctum')->group(function () {
+    Route::get('/list', [LikeCommentController::class, 'listLikeComment'])->name('like.list');
+    Route::post('/create', [LikeCommentController::class, 'likeComment'])->name('like.create');
+    Route::delete('/delete/{id}', [LikeCommentController::class, 'UnlikeComment'])->name('like.delete');
+    Route::put('/update/reach/{id}', [LikeCommentController::class, 'updateReachComment'])->name('like.update');
+
+});
+
+// comment
+Route::prefix('comment')->middleware('auth:sanctum')->group(function () {
+    Route::get('/list', [CommentController::class, 'listComment']);
+    Route::post('/create', [CommentController::class, 'storeComment']);
+    Route::put('/update/{id}', [CommentController::class, 'updateComment']);
+    Route::delete('/delete/{id}', [CommentController::class, 'destroyComment']);
+
 });

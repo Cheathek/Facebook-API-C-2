@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -42,6 +43,7 @@ class PostController extends Controller
     public function index()
     {
         $posts = Post::list();
+        $posts = PostResource::collection($posts);
         return response()->json(['success' => true, 'posts' => $posts]);
     }
 
@@ -127,7 +129,6 @@ class PostController extends Controller
                 'image' => json_encode($imagePaths),
                 'video' => json_encode($videoPaths),
             ]);
-
             return response()->json([
                 'message' => 'Post created successfully',
                 'post' => $post,
@@ -343,6 +344,7 @@ class PostController extends Controller
     public function showPost($id)
     {
         $post = Post::findOrFail($id);
+        $post = new PostResource($post);
         return response()->json($post);
     }
 

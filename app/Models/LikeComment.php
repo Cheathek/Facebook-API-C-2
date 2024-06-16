@@ -15,7 +15,13 @@ class LikeComment extends Model
     ];
 
     public function comment(){
-        return $this->belongsTo(Comment::class);
+        return $this->belongsTo(Comment::class,'comment_id','id');
+    }
+    public function user(){
+        return $this->belongsTo(User::class,'user_id','id');
+    }
+    public function likeType(){
+        return $this->belongsTo(LikeType::class,'like_type_id','id');
     }
 
 }

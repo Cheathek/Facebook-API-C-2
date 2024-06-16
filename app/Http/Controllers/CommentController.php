@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -49,6 +50,7 @@ class CommentController extends Controller
     {
         $userId = Auth::id();
         $comments = Comment::where('user_id', $userId)->get();
+        $comments = CommentResource::collection($comments);
         return response()->json(['success' => true, 'comments' => $comments], 200);
     }
 

@@ -16,7 +16,7 @@ class LikePost extends Model
 
     public function likeType()
     {
-        return $this->belongsTo(LikeType::class);
+        return $this->belongsTo(LikeType::class, 'like_type_id','id');
     }
 
     public function user()

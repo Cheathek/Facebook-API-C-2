@@ -15,7 +15,7 @@ class Friend extends Model
 
     public function friends(): HasMany
     {
-        return $this->hasMany(User::class, 'friend_id', 'id');
+        return $this->hasMany(User::class, 'id','friend_id');
     }
 
     public static function list()

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FriendResource;
 use App\Models\Friend;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,7 @@ class FriendController extends Controller
     public function friendList()
     {
         $friends = Friend::list();
+        $friends = FriendResource::collection($friends);
         return response()->json(['success' => true, 'friends' => $friends]);
     }
 
@@ -82,6 +84,7 @@ class FriendController extends Controller
     public function indexRequest()
     {
         $friends = Friend::requestList();
+        $friends = FriendResource::collection($friends);
         return response()->json(['success' => true, 'friends' => $friends]);
     }
 

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CommentResource;
+use App\Http\Resources\LikeCommentResource;
 use App\Models\Comment;
 use App\Models\LikeComment;
 use App\Models\LikeType;
@@ -49,6 +51,7 @@ class LikeCommentController extends Controller
         $likes = LikeComment::with('comment')
             ->where('user_id', $user)
             ->get();
+        $likes = LikeCommentResource::collection($likes);
         $count = LikeComment::with('comment')
             ->where('user_id', $user)
             ->count();

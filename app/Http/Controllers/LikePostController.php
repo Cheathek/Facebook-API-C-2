@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\LikePostResource;
 use App\Models\LikePost;
 use App\Models\LikeType;
 use App\Models\Post;
@@ -51,6 +52,7 @@ class LikePostController extends Controller
         $count = LikePost::with('post')
             ->where('user_id', $user)
             ->count();
+            $likes = LikePostResource::collection($likes);
 
         return response()->json([
             'posts' => $likes,

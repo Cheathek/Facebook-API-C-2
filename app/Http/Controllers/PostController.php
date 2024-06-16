@@ -45,7 +45,7 @@ class PostController extends Controller
         return response()->json(['success' => true, 'posts' => $posts]);
     }
 
-        /**
+    /**
      * @OA\Post(
      *     path="/api/post/create",
      *     tags={"posts"},
@@ -93,8 +93,7 @@ class PostController extends Controller
                     'post' => $sharedPost,
                 ], 201);
             }
-        }
-        else {
+        } else {
             $request->validate([
                 'title' => 'required|string|max:255',
                 'text' => 'required|string',
@@ -136,8 +135,8 @@ class PostController extends Controller
         }
     }
 
-     /**
-     * @OA\post(
+    /**
+     * @OA\Post(
      *     path="/api/post/update/image/{id}",
      *     tags={"posts"},
      *     summary="Update image or video",
@@ -209,7 +208,7 @@ class PostController extends Controller
     }
 
     /**
-     * @OA\put(
+     * @OA\Put(
      *     path="/api/post/update/{id}",
      *     tags={"posts"},
      *     summary="Update data ",
@@ -268,5 +267,83 @@ class PostController extends Controller
         ], 200);
     }
 
+    /**
+     * @OA\Delete(
+     *     path="/api/post/delete/{id}",
+     *     tags={"posts"},
+     *     summary="Delete Post ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="deletePost",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+    public function deletePost($id)
+    {
+        $post = Post::findOrFail($id);
+        if ($post->user_id !== Auth::id()) {
+            return response()->json(['message' => 'You are not authorized to delete this post.'], 403);
+        }
+
+        $post->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Post deleted successfully',
+        ], 200);
+    }
+
+     /**
+     * @OA\Get(
+     *     path="/api/post/show/{id}",
+     *     tags={"posts"},
+     *     summary="Show Post ",
+     *     description="Multiple status values can be provided with comma separated string",
+     *     operationId="showPost",
+     *     @OA\Parameter(
+     *         name="status",
+     *         in="query",
+     *         description="Status values that needed to be considered for filter",
+     *         required=true,
+     *         explode=true,
+     *         @OA\Schema(
+     *             default="available",
+     *             type="string",
+     *             enum={"available", "pending", "sold"},
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="successful operation",
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid status value"
+     *     )
+     * )
+     */
+    public function showPost($id)
+    {
+        $post = Post::findOrFail($id);
+        return response()->json($post);
+    }
 
 }

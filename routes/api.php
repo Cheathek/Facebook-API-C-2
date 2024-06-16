@@ -45,9 +45,8 @@ Route::prefix('post')->middleware('auth:sanctum')->group(function () {
     Route::post('/create', [PostController::class, 'store'])->name('post.create');
     Route::post('/update/image/{id}', [PostController::class, 'updateImage'])->name('post.updateImage');
     Route::put('/update/{id}', [PostController::class, 'update'])->name('post.update');
-    Route::delete('/delete/{id}', [PostController::class, 'destroy'])->name('post.destroy');
-    Route::get('/show/{id}', [PostController::class, 'show'])->name('post.show');
-    Route::post('/share', [PostController::class, 'share'])->name('post.share');
+    Route::delete('/delete/{id}', [PostController::class, 'deletePost'])->name('post.destroy');
+    Route::get('/show/{id}', [PostController::class, 'showPost'])->name('post.show');
 });
 
 // Friends
